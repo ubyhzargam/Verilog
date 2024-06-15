@@ -1,0 +1,32 @@
+module mux(out,s1,s0,i0,i1,i2,i3);
+  input i0,i1,i2,i3,s1,s0;
+  output out;
+  wire n0,n1;
+  wire y0,y1,y2,y3;
+  
+  not(n0,s0);
+  not(n1,s1);
+  
+  and(y0,n0,n1,i0);
+  and(y1,s0,n1,i1);
+  and(y2,n0,s1,i2);
+  and(y3,s0,s1,i3);
+  
+  or(out,y0,y1,y2,y3);
+  
+endmodule
+
+module test;
+  reg in0,in1,in2,in3,s0,s1;
+  wire out;
+  mux m(out,s1,s0,in0,in1,in2,in3);
+  initial
+    begin
+      in0=1;in1=0;in2=1;in3=0;s1=0;s0=0;
+      $display("%b",out);
+      #10 s0=1;$display("%b",out);
+      #10 s0=0;s1=1;$display("%b",out);
+      #10 s0=1;$display("%b",out);
+      #10 $display("%b",out);
+    end
+endmodule
