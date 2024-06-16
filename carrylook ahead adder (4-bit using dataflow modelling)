@@ -1,0 +1,53 @@
+module stimulus;
+
+reg [3:0] a,b;
+reg cin;
+wire [3:0] sum;
+wire cout;
+
+fulladder4 f(sum,cout,cin,a,b);
+
+initial 
+begin
+$monitor($time,"A = %b, B= %b, Cin = %b, Sum = %b, Cout = %b \n",a,b,cin,sum,cout);
+end
+initial 
+begin
+a=4'd0;b=4'd0;cin=1'd0;
+#10 a=4'd2;b=4'd2;
+#10 cin=1'd1;
+#10 cin=1'd0;a=4'd8;b=4'd8;
+#10 a=4'd10;b=4'd10;
+end
+endmodule
+
+module fulladder4(sum,cout,cin,a,b);
+output [3:0] sum;
+output cout;
+input [3:0] a,b;
+input cin;
+wire g0,p0,g1,p1,g2,p2,g3,p3;
+wire c1,c2,c3,c4;
+
+assign g0=a[0]&b[0],
+       g1=a[1]&b[1],
+       g2=a[2]&b[2],
+       g3=a[3]&b[3];
+       
+assign p0=a[0]^b[0],
+       p1=a[1]^b[1],
+       p2=a[2]^b[2],
+       p3=a[3]^b[3];
+       
+assign sum[0]=cin^p0,
+       sum[1]=c1^p1,
+       sum[2]=c2^p2,
+       sum[3]=c3^p3;
+       
+assign c1=g0|(p0&cin),
+       c2=g1|(p1&c1)|(p1&p0&cin),
+       c3=g2|(p2&c2)|(p2&p1&c1)|(p2&p1&p0&cin),
+       c4=g3|(p3&c3)|(p3&p2&c2)|(p3&p2&p1&c1)|(p3&p2&p1&p0&cin);
+       
+assign cout=c4;
+endmodule
