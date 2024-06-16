@@ -1,0 +1,20 @@
+module mux(out,s1,s0,y3,y2,y1,y0);
+input s1,s0,y3,y2,y1,y0;
+output out;
+assign out=s1?(s0?y3:y2):(s0?y1:y0);
+endmodule
+
+module test;
+  reg in0,in1,in2,in3,s0,s1;
+  wire out;
+  mux m(out,s1,s0,in3,in2,in1,in0);
+  initial
+    begin
+      in0=1;in1=0;in2=1;in3=0;s1=0;s0=0;
+      $display("%b",out);
+      #10 s0=1;$display("%b",out);
+      #10 s0=0;s1=1;$display("%b",out);
+      #10 s0=1;$display("%b",out);
+      #10 $display("%b",out);
+    end
+endmodule
