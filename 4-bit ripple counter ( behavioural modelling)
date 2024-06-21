@@ -1,0 +1,29 @@
+module counter(Q , clock, clear);
+
+output reg [3:0] Q;
+input clock, clear; 
+always @ ( posedge clear or negedge clock) 
+begin
+if (clear) 
+Q=4'b0;
+else
+Q = (Q + 1 ) % 16;
+end
+endmodule
+
+module testbench;
+wire [3:0] q;
+reg clk,clr;
+counter c(q,clk,clr);
+initial 
+begin
+clk=1'b0;
+clr=1'b1;
+$monitor($time, "  count = %d",q);
+#10 clr=1'b0;
+#100 clr=1'b1;
+#100 clr = 1'b0;
+#100 $stop;
+end
+always #5 clk=~clk;
+endmodule
