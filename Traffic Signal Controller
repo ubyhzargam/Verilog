@@ -1,0 +1,137 @@
+//Design of Traffic Signal Controller. Consider a controller for traffic at the intersection of a main highway and a country road.
+// The traffic signal for the main highway gets highest priority because cars are continuously present on the main highway. Thus, the main highway signal remains green by default.
+// Occasionally, cars from the country road arrive at the traffic signal. The traffic signal for the country road must turn green only long enough to let the cars on the country road go.
+// As soon as there are no cars on the country road, the country road traffic signal turns yellow and then red and the traffic signal on the main highway turns green again.
+// There is a sensor to detect cars waiting on the country road. The sensor sends a signal X as input to the controller. X = 1 if there are cars on the country road; otherwise, X= 0 .
+// There are delays on transitions from S1 to 52, from S2 to S3, and from S4 to SO. The delays must be controllable.
+// State Signals
+//SO : Hwy=GCntry=R
+//S1 : Hwy=YCntry=R
+//S2 : Hwy=RCntry=R
+//S3 : Hwy=RCntry=G
+//S4 : Hwy=RCntry=Y
+
+`define RED 2'd0
+`define YELLOW 2'd1
+`define GREEN 2'd2
+`define TRUE 1'b1
+`define FALSE 1'b0
+
+`define S0 3'd0
+`define S1 3'd1
+`define S2 3'd2
+`define S3 3'd3
+`define S4 3'd4
+
+`define Y2RDELAY 3
+`define R2GDELAY 2
+
+module signal_control(hwy,cntry,x,clk,clr);
+output reg [1:0] hwy,cntry;
+input x;
+input clk,clr;
+reg [2:0] state,next_state;
+
+initial 
+begin
+hwy=`GREEN;
+cntry=`RED;
+state=`S0;
+next_state=`S0;
+end
+
+always @(posedge clk)
+state=next_state;
+
+always @(state)
+begin
+case(state)
+`S0:
+begin
+hwy=`GREEN;
+cntry=`RED;
+end
+`S1:
+begin
+hwy=`YELLOW;
+cntry=`RED;
+end
+`S2:
+begin
+hwy=`RED;
+cntry=`RED;
+end
+`S3:
+begin
+hwy=`RED;
+cntry=`GREEN;
+end
+`S4:
+begin
+hwy=`RED;
+cntry=`YELLOW;
+end
+endcase
+end
+
+always @(state or clr or x)
+begin
+if(clr)
+next_state=`S0;
+else
+case(state)
+`S0:
+if(x) next_state=`S1;
+else next_state=`S0;
+`S1: begin repeat(`Y2RDELAY)@(posedge clk);
+next_state=`S2;
+end
+`S2:begin
+repeat (`R2GDELAY)@(posedge clk);
+next_state=`S3;
+end
+`S3:if(x)
+next_state=`S3;
+else
+next_state=`S4;
+`S4:begin
+repeat(`Y2RDELAY)@(posedge clk);
+next_state=`S0;
+end
+default:next_state=`S0;
+endcase
+end
+endmodule
+
+module stimulus;
+wire [1:0] MAIN_SIG, CNTRY_SIG; 
+reg CAR_ON_CNTRY_RD;
+reg CLOCK, CLEAR;
+signal_control SC(MAIN_SIG, CNTRY_SIG, CAR_ON_CNTRY_RD, CLOCK, CLEAR);
+initial
+$monitor($time, "Main Sig = %b, Country Sig = %b, Car-on-cntry = %b \n", MAIN_SIG, CNTRY_SIG, CAR_ON_CNTRY_RD) ;
+
+initial
+begin
+CLOCK = `FALSE;
+forever #5 CLOCK = ~CLOCK;
+end
+
+initial
+begin
+CLEAR = `TRUE;
+repeat (5) @(negedge CLOCK); CLEAR = `FALSE;
+end
+
+initial
+begin
+CAR_ON_CNTRY_RD = `FALSE;
+#200 CAR_ON_CNTRY_RD = `TRUE; 
+#100 CAR_ON_CNTRY_RD = `FALSE;
+#200 CAR_ON_CNTRY_RD = `TRUE; 
+#100 CAR_ON_CNTRY_RD = `FALSE;
+#200 CAR_ON_CNTRY_RD = `TRUE;
+#100 CAR_ON_CNTRY_RD = `FALSE;
+#100 $stop;
+end
+endmodule
