@@ -1,0 +1,26 @@
+//This file implements the functionality of or gate using verilog. It implements or gate functionality using nand gates only. It also contains test bench / stimulus block to test the 
+//functionality of the module.
+
+module or1 (y,a,b); 
+input a,b;
+output y;
+wire x1,x2;
+nand(x1,a,a);
+nand(x2,b,b);
+nand(y,x1,x2);
+endmodule
+
+
+module stimulus1;
+wire y;
+reg a,b;
+or1 an(y,a,b);
+initial 
+begin
+$monitor($time,"Output = %b, A = %b, B = %b", y,a,b);
+#5 a=1'b0; b=1'b0;
+#5 a=1'b1;
+#10 a=1'b0; b=1'b1;
+#5 a=1'b1;
+end
+endmodule
