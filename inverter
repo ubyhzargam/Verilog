@@ -1,0 +1,58 @@
+//This code implements the functionality of an inverter using all the levels of abstraction. There is also individual test bench written for each of the modules separately to test the 
+//functionality.
+
+module inverter1 (y,a); // Gate level modelling
+input a;
+output y;
+not (y,a);
+endmodule
+
+module inverter2(y,a); //Dataflow modelling
+input a;
+output y;
+assign y=(~a);
+endmodule
+
+module inverter3(output reg y, input a); //Behavioral modelling
+always @ (a)
+y=(~a);
+endmodule
+
+module stimulus1;
+wire y;
+reg a;
+inverter1 i(y,a);
+initial 
+begin
+$monitor($time,"Output = %b, Input = %b", y,a);
+#5 a=1'b0;
+#5 a=1'b1;
+#10 a=1'b0;
+end
+endmodule
+
+module stimulus2;
+wire y;
+reg a;
+inverter2 i(y,a);
+initial 
+begin
+$monitor($time,"Output = %b, Input = %b", y,a);
+#5 a=1'b0;
+#5 a=1'b1;
+#10 a=1'b0;
+end
+endmodule
+
+module stimulus3;
+wire y;
+reg a;
+inverter3 i(y,a);
+initial 
+begin
+$monitor($time,"Output = %b, Input = %b", y,a);
+#5 a=1'b0;
+#5 a=1'b1;
+#10 a=1'b0;
+end
+endmodule
