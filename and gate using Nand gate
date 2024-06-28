@@ -1,0 +1,24 @@
+//This file contains code to implement the functionality of and gate using nand gates. It also contains stimulus / test bench to test the functionality of and gate.
+
+module and1 (y,a,b); 
+input a,b;
+output y;
+wire x;
+nand(x,a,b);
+nand(y,x,x);
+endmodule
+
+
+module stimulus1;
+wire y;
+reg a,b;
+and1 an(y,a,b);
+initial 
+begin
+$monitor($time,"Output = %b, A = %b, B = %b", y,a,b);
+#5 a=1'b0; b=1'b0;
+#5 a=1'b1;
+#10 a=1'b0; b=1'b1;
+#5 a=1'b1;
+end
+endmodule
