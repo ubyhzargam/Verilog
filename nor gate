@@ -1,0 +1,71 @@
+// This file implements nor gate in different levels of abstraction in different modules. There is testbench for each module which has a particular level of abstraction, these 
+//test bench modules test the functionality of the modules that implement the functionality of nor gate.
+
+module nor1 (y,a,b); // Gate level modelling
+input a,b;
+output y;
+nor (y,a,b);
+endmodule
+
+module nor2(y,a,b); //Dataflow modelling
+input a,b;
+output y;
+assign y=~(a|b);
+endmodule
+
+module nor3(output reg y, input a,input b); //Behavioral modelling
+always @ (a or b)
+case({a,b})
+2'b00:y=1'b1;
+2'b01:y=1'b0;
+2'b10:y=1'b0;
+2'b11:y=1'b0;
+default:y=1'bx;
+endcase
+endmodule
+
+module stimulus1;
+wire y;
+reg a,b;
+nor1 an(y,a,b);
+initial 
+begin
+$monitor($time,"Output = %b, A = %b, B = %b", y,a,b);
+#5 a=1'b0; b=1'b0;
+#5 a=1'b1;
+#10 a=1'b0; b=1'b1;
+#5 a=1'b1;
+end
+endmodule
+
+module stimulus2;
+wire y;
+reg a,b;
+nor2 an(y,a,b);
+initial 
+begin
+$monitor($time,"Output = %b, A = %b, B = %b", y,a,b);
+#5 a=1'b0; b=1'b0;
+#5 a=1'b1;
+#10 a=1'b0; b=1'b1;
+#5 a=1'b1;
+end
+endmodule
+
+module stimulus3;
+wire y;
+reg a,b;
+nor3 an(y,a,b);
+initial 
+begin
+$monitor($time,"Output = %b, A = %b, B = %b", y,a,b);
+#5 a=1'b0; b=1'b0;
+#5 a=1'b1;
+#10 a=1'b0; b=1'b1;
+#5 a=1'b1;
+end
+endmodule
+
+
+
+
