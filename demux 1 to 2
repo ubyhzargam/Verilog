@@ -1,0 +1,68 @@
+// This code implements 1 to 2 demultiplexer in various levels of modelling i.e, abstraction. This file also contains testbench or stimulus to test the functionality of the modules.
+
+module demux1_1to2 (input d, input s0, output y0, output y1); // Gate level modelling using primitive gates
+wire s0bar;
+not(s0bar,s0);
+and(y0,s0bar,d);
+and(y1,s0,d);
+endmodule
+
+module demux2_1to2 (d,s0,y0,y1); // Data flow level of abstraction
+input d,s0;
+output y1,y0;
+assign y1=(s0&d);
+assign y0=((~s0)&d);
+endmodule
+
+module demux3_1to2 (input d,input s0, output reg y0, output reg y1); // Behavioural level of abstraction
+always @ (*)
+begin
+case(s0)
+1'b0 : begin y0<=d;y1<=1'b0;end
+1'b1 : begin y0<=1'b0;y1<=d;end
+default : begin y0<=1'bx; y1<=1'bx;end
+endcase
+end
+endmodule
+
+module stimulus1;
+wire y0,y1;
+reg d,s0;
+demux1_1to2 d0(d,s0,y0,y1);
+initial 
+begin 
+$monitor ( $time, " y1 = %b , y0 = %b, s0 = %b, d = %b",y1,y0,s0,d);
+#5 d=1'b0;s0=1'b0;
+#5 d=1'b1;
+#5 s0=1'b1;
+#5 d=1'b0;
+end
+endmodule
+
+module stimulus2;
+wire y0,y1;
+reg d,s0;
+demux2_1to2 d0(d,s0,y0,y1);
+initial 
+begin 
+$monitor ( $time, " y1 = %b , y0 = %b, s0 = %b, d = %b",y1,y0,s0,d);
+#5 d=1'b0;s0=1'b0;
+#5 d=1'b1;
+#5 s0=1'b1;
+#5 d=1'b0;
+end
+endmodule
+
+module stimulus3;
+wire y0,y1;
+reg d,s0;
+demux3_1to2 d0(d,s0,y0,y1);
+initial 
+begin 
+$monitor ( $time, " y1 = %b , y0 = %b, s0 = %b, d = %b",y1,y0,s0,d);
+#5 d=1'b0;s0=1'b0;
+#5 d=1'b1;
+#5 s0=1'b1;
+#5 d=1'b0;
+end
+endmodule
