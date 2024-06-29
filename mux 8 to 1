@@ -1,0 +1,53 @@
+// This code implements the functionality of 8to1 mux using structural modelling. This type of modelling instantiates lower order mux to implement the functionaliy of higher blocks.
+//There is also a stimulus / test bench block to verify the functionality of the module.
+
+module mux2to1(y,s,i1,i0);
+input s,i1,i0;
+output reg y;
+always @(s or i1 or i0)
+case (s)
+1'b0:y=i0;
+1'b1:y=i1;
+default:y=1'bx;
+endcase
+endmodule
+
+module mux4to1(y,s1,s0,i3,i2,i1,i0);
+input s1,s0,i3,i2,i1,i0;
+output y;
+wire x1,x0;
+mux2to1 m0(x0,s0,i1,i0);
+mux2to1 m1(x1,s0,i3,i2);
+mux2to1 m2(y,s1,x1,x0);
+endmodule
+
+module mux8to1(y,s2,s1,s0,i7,i6,i5,i4,i3,i2,i1,i0);
+input s2,s1,s0,i7,i6,i5,i4,i3,i2,i1,i0;
+output y;
+wire x1,x0;
+mux4to1 m0(x0,s1,s0,i3,i2,i1,i0);
+mux4to1 m1(x1,s1,s0,i7,i6,i5,i4);
+mux2to1 m2(y,s2,x1,x0);
+endmodule
+
+module stimulus;
+reg s2,s1,s0,i7,i6,i5,i4,i3,i2,i1,i0;
+wire y;
+mux8to1 m(y,s2,s1,s0,i7,i6,i5,i4,i3,i2,i1,i0);
+initial 
+begin
+$monitor($time,"Output = %b , s2 = %b , s1 = %b , s0 = %b ",y,s2,s1,s0);
+#10 s2=0;s1=0;s0=0;
+i7=1; i6=0;i5=1;i4=0;i3=1;i2=0;i1=1;i0=0;
+#10 s0=1;
+#10 s1=1;s0=0;
+#10 s0=1;
+#10 s2=1;s1=0;s0=0;
+#10 s0=1;
+#10 s1=1;s0=0;
+#10 s0=1;
+end
+endmodule
+
+
+
