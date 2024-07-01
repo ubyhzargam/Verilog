@@ -1,0 +1,32 @@
+// This code implements the functionality of a 4:2 Encoder. Note that it is not a priority encoder. The code also contains the test bench to test the functionality of the encoder.
+
+module enc_4to2 (c1,c0,a3,a2,a1,a0);
+input a3,a2,a1,a0;
+output reg c1,c0;
+always @ (*)
+case ({a3,a2,a1,a0})
+4'b0001:begin c1=1'b0;c0=1'b0;end
+4'b0010:begin c1=1'b0;c0=1'b1;end
+4'b0100:begin c1=1'b1;c0=1'b0;end
+4'b1000:begin c1=1'b1;c0=1'b1;end
+default:begin c1=1'bx;c0=1'bx;end
+endcase
+endmodule
+
+module stimulus;
+reg a3,a2,a1,a0;
+wire c1,c0;
+enc_4to2 e(c1,c0,a3,a2,a1,a0);
+initial 
+begin
+$monitor($time, " c1 = %b , c0 = %b , a3 = %b , a2 = %b , a1 = %b , a0 = %b ",c1,c0,a3,a2,a1,a0);
+#10 a3=1'b0;a2=1'b0;a1=1'b0;a0=1'b0;
+#10 a3=1'b0;a2=1'b0;a1=1'b0;a0=1'b1;
+#10 a3=1'b0;a2=1'b0;a1=1'b1;a0=1'b0;
+#10 a3=1'b0;a2=1'b1;a1=1'b0;a0=1'b0;
+#10 a3=1'b1;a2=1'b0;a1=1'b0;a0=1'b0;
+#10 a3=1'b1;a2=1'b0;a1=1'b0;a0=1'b1;
+#10 a3=1'b0;a2=1'b1;a1=1'b1;a0=1'b0;
+#10 a3=1'b1;a2=1'b1;a1=1'b1;a0=1'b1;
+end
+endmodule
