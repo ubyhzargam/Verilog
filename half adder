@@ -1,0 +1,70 @@
+// This code implements half adder in various levels of abstraction. The code also contains stimulus blocks for each of the abstraction module to verify the functionality.
+
+module ha1 (s,c,a,b); // Gate level
+input a,b;
+output s,c;
+xor(s,a,b);
+and(c,a,b);
+endmodule
+
+module ha2 (s,c,a,b); // Data-flow
+input a,b;
+output s,c;
+assign s=a^b,
+       c=a&b;
+endmodule
+
+module ha3 (s,c,a,b); // Behavioral
+input a,b;
+output reg s,c;
+always @ (*)
+casex ({a,b})
+2'b00:begin s=1'b0;c=1'b0;end
+2'b01:begin s=1'b1;c=1'b0;end
+2'b10:begin s=1'b1;c=1'b0;end
+2'b11:begin s=1'b0;c=1'b1;end
+default:begin s=1'bx;c=1'bx;end
+endcase
+endmodule
+
+module stimulus1;
+wire s,c;
+reg a,b;
+ha1 h(s,c,a,b);
+initial
+begin
+$monitor($time," a = %b , b = %b , sum = %b , carry = %b ",a,b,s,c);
+#5 a=1'b0;b=1'b0;
+#5 b=1'b1;
+#5 a=1'b1;b=1'b0;
+#5 b=1'b1;
+end
+endmodule
+
+module stimulus2;
+wire s,c;
+reg a,b;
+ha2 h(s,c,a,b);
+initial
+begin
+$monitor($time," a = %b , b = %b , sum = %b , carry = %b ",a,b,s,c);
+#5 a=1'b0;b=1'b0;
+#5 b=1'b1;
+#5 a=1'b1;b=1'b0;
+#5 b=1'b1;
+end
+endmodule
+
+module stimulus3;
+wire s,c;
+reg a,b;
+ha3 h(s,c,a,b);
+initial
+begin
+$monitor($time," a = %b , b = %b , sum = %b , carry = %b ",a,b,s,c);
+#5 a=1'b0;b=1'b0;
+#5 b=1'b1;
+#5 a=1'b1;b=1'b0;
+#5 b=1'b1;
+end
+endmodule
