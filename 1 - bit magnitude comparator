@@ -1,0 +1,78 @@
+// This code implements 1 - bit magnitude comparator in different levels of abstraction. It also has stimulus modules to verify the functionality of the comparator. 
+
+module comp1 (g,e,l,a,b);
+input a,b;
+output g,e,l;
+wire abar,bbar;
+not(abar,a);
+not(bbar,b);
+and(g,a,bbar);
+and(l,abar,b);
+wire x1,x2;
+and(x1,abar,bbar);
+and(x2,a,b);
+or(e,x1,x2);
+endmodule;
+
+module comp2 (g,e,l,a,b);
+input a,b;
+output g,e,l;
+assign g=a&(~b),
+       e=(a&b)|((~a)&(~b)),
+       l=(~a)&b;
+endmodule
+
+module comp3 (g,e,l,a,b);
+input a,b;
+output reg g,e,l;
+always @ (a or b)
+case ({a,b})
+2'b00:begin g=1'b0;e=1'b1;l=1'b0; end
+2'b01:begin g=1'b0;e=1'b0;l=1'b1; end
+2'b10:begin g=1'b1;e=1'b0;l=1'b0; end
+2'b11:begin g=1'b0;e=1'b1;l=1'b0; end
+default : begin g=1'bx;e=1'bx;l=1'bx; end
+endcase
+endmodule
+
+module stimulus1;
+wire g,e,l;
+reg a,b;
+comp1 c (g,e,l,a,b);
+initial 
+begin
+$monitor ($time, " a=%b , b=%b , a>b:%b , a=b:%b , a<b:%b ",a,b,g,e,l);
+#1 a=1'b0;b=1'b0;
+#1 a=1'b0;b=1'b1;
+#1 a=1'b1;b=1'b0;
+#1 a=1'b1;b=1'b1;
+end
+endmodule
+
+module stimulus2;
+wire g,e,l;
+reg a,b;
+comp2 c (g,e,l,a,b);
+initial 
+begin
+$monitor ($time, " a=%b , b=%b , a>b:%b , a=b:%b , a<b:%b ",a,b,g,e,l);
+#1 a=1'b0;b=1'b0;
+#1 a=1'b0;b=1'b1;
+#1 a=1'b1;b=1'b0;
+#1 a=1'b1;b=1'b1;
+end
+endmodule
+
+module stimulus3;
+wire g,e,l;
+reg a,b;
+comp3 c (g,e,l,a,b);
+initial 
+begin
+$monitor ($time, " a=%b , b=%b , a>b:%b , a=b:%b , a<b:%b ",a,b,g,e,l);
+#1 a=1'b0;b=1'b0;
+#1 a=1'b0;b=1'b1;
+#1 a=1'b1;b=1'b0;
+#1 a=1'b1;b=1'b1;
+end
+endmodule
