@@ -1,0 +1,57 @@
+// This code implements a 1 digit xs-3 adder using 4 bit full adders. There are 2 xs-3 input having one digit each. This code also contains the stimulus block. 
+
+module fulladder1 (sum,cout,cin,a,b);
+
+input cin,a,b;
+output sum,cout;
+wire s1,c1,s2;
+
+xor(s1,a,b);
+xor(sum,s1,cin);
+and(c1,a,b);
+and(s2,s1,cin);
+or(cout,c1,s2);
+
+endmodule
+
+module fulladder4(sum,cout,cin,a,b);
+
+input [3:0] a,b;
+input cin;
+output [3:0] sum;
+output cout;
+wire c1,c2,c3;
+
+fulladder1 fa0(sum[0],c1,cin,a[0],b[0]);
+fulladder1 fa1(sum[1],c2,c1,a[1],b[1]);
+fulladder1 fa2(sum[2],c3,c2,a[2],b[2]);
+fulladder1 fa3(sum[3],cout,c3,a[3],b[3]);
+
+endmodule
+
+module xs3_adder (s,cout,a,b,cin);
+input [3:0] a,b;
+input cin;
+output [3:0] s;
+output cout;
+wire cbar;
+wire c;
+wire [3:0] is;
+fulladder4 f0(is,cout,cin,a,b);
+not(cbar,cout);
+fulladder4 f1(s,c,1'b0,{cbar,cbar,cout,1'b1},is);
+endmodule
+
+module stimulus;
+reg [3:0] a,b;
+reg cin;
+wire [3:0] sum;
+wire cout;
+xs3_adder x(sum,cout,a,b,cin);
+initial 
+begin
+cin=1'b0;
+$monitor ( $time , " a = %d , b = %d , sum = %b , carry = %b ",a,b,sum,cout);
+#1 a=4'b1000;b=4'b0101;
+#1 a=4'b1000;b=4'b1010;
+end endmodule
