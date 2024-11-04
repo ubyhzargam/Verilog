@@ -5,7 +5,7 @@ module top_module (
     input clk,
     input reset,
     input [31:0] in,
-    output [31:0] out
+    output [31:0] reg out
 );
     reg [31:0] temp;
     always@(posedge clk)
