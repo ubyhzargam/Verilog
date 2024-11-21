@@ -34,12 +34,12 @@ endcase
 end
 endmodule
 
+// Test bench
+
 module tb();
 reg clk, rst, x;
 wire y;
 
-
-// Test bench
 test t(clk, x, rst, y);
 
 always #3 clk = ~clk;
