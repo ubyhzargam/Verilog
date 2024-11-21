@@ -5,7 +5,7 @@
 
 module fsm(input clk, input rst, input x, output reg y);
 
-parameter S0=2'b00,S1=2'b01,S2=2'b10,S3=2'b11;
+   parameter [1:0] S0=2'b00,S1=2'b01,S2=2'b10,S3=2'b11;
 
 reg [1:0] ps,ns;
 
