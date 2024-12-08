@@ -4,8 +4,11 @@ module top_module(
     input clk,
     input areset,    
     input in,
-    output out); 
+    output reg out); 
 
+    initial 
+    state<=B;
+    
     parameter A=0, B=1; 
     reg state, next_state;
 
@@ -25,3 +28,38 @@ module top_module(
     end
 
 endmodule
+
+// Testbench
+
+module test;
+
+wire out;
+reg clk,areset, in;
+
+top_module t(clk,areset,in,out);
+
+always #5 clk=~clk;
+
+initial begin
+clk=1'b0;
+areset=1'b0;
+in=1'b0;
+#6; in=1'b1;
+#10; in=1'b0;
+#10; in=1'b1;
+#10 areset=1;
+#20 $finish;
+end
+
+initial $monitor($time," ",areset," ",in," ",out);
+
+endmodule
+
+
+
+
+
+
+
+
+
