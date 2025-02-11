@@ -162,18 +162,4 @@ endmodule
 
 
 
-interface uart_if;
-  logic uclktx;
-  logic uclkrx;
-  logic clk;
-  logic rst;
-  logic rx;
-  logic newd;
-  logic [7:0] dintx;
-  logic donetx;
-  logic donerx;
-  logic tx;
-  logic [7:0] doutrx;
-endinterface
-              
                   
